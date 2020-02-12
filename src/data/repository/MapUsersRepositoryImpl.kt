@@ -12,6 +12,9 @@ class MapUsersRepositoryImpl : IRepository<User> {
     override fun insertItem(item: User): Boolean {
         val maxId = mapUsers.maxBy { it.value.id }.let { it?.value?.id ?: 0 }
         item.id = maxId + 1
+        for (user in mapUsers) {
+            if (user.value.name == item.name) return false
+        }
         return if (mapUsers[item.id] == null) {
             mapUsers[item.id] = item
             true
