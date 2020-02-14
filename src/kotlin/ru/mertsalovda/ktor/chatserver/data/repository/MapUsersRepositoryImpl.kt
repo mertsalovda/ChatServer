@@ -2,7 +2,7 @@ package ru.mertsalovda.ktor.chatserver.data.repository
 
 import ru.mertsalovda.ktor.chatserver.data.model.User
 
-class MapUsersRepositoryImpl : IRepository<User> {
+class MapUsersRepositoryImpl : UserRepository {
 
     val mapUsers = mutableMapOf(
         1L to User(1, "admin", "admin"),
@@ -35,11 +35,18 @@ class MapUsersRepositoryImpl : IRepository<User> {
         return mapUsers.remove(item.id, item)
     }
 
-    override fun getAll(): List<User> {
-        return mapUsers.toList().map { it.second }
-    }
+    override fun getAll(): List<User> = mapUsers.toList().map { it.second }
 
     override fun getById(id: Long): User? {
         return mapUsers[id]
+    }
+
+    override fun updateItemToken(id: Long, token: String): Boolean {
+        mapUsers[id].let { it ?: return false }.tokenFB = token
+        return true
+    }
+
+    override fun getAllForId(id: Long): List<User> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

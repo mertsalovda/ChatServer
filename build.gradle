@@ -11,13 +11,13 @@ buildscript {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-group 'ru.mertsalovda.ktor.chatserver'
+group 'kotlin.ru.mertsalovda.ktor.chatserver'
 version '0.0.1'
-mainClassName = "io.ktor.server.netty.EngineMain"
+mainClassName = "ru.mertsalovda.ktor.chatserver.ApplicationKt"
 
 sourceSets {
-    main.kotlin.srcDirs = main.java.srcDirs = ['src']
-    test.kotlin.srcDirs = test.java.srcDirs = ['test']
+    main.kotlin.srcDirs = main.java.srcDirs = ['src/kotlin']
+    test.kotlin.srcDirs = test.java.srcDirs = ['test/kotlin']
     main.resources.srcDirs = ['resources']
     test.resources.srcDirs = ['testresources']
 }
@@ -49,4 +49,16 @@ dependencies {
     implementation "io.ktor:ktor-client-gson:$ktor_version"
     implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"
     testImplementation "io.ktor:ktor-server-tests:$ktor_version"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'ru.mertsalovda.ktor.chatserver.ApplicationKt'
+    }
+
+    from {
+        configurations.default.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }

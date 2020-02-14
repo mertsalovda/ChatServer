@@ -1,14 +1,12 @@
-package data.repository
+package ru.mertsalovda.ktor.chatserver.data.repository
 
 import org.junit.Before
 import org.junit.Test
 import ru.mertsalovda.ktor.chatserver.data.model.User
-import ru.mertsalovda.ktor.chatserver.data.repository.IRepository
-import ru.mertsalovda.ktor.chatserver.data.repository.MapUsersRepositoryImpl
 import kotlin.test.assertEquals
 
 internal class IRepositoryTest {
-    lateinit var repository: IRepository<User>
+    lateinit var repository: UserRepository
 
     @Before
     fun createRepository() {
