@@ -26,6 +26,12 @@ data class User(var name: String, var password: String) {
         this.description = description
         this.imageBase64 = imageBase64
     }
+
+    override fun toString(): String {
+        return "User(name='$name', password='$password', chatToken='$chatToken', tokenFB='$tokenFB', description='$description', imageBase64='$imageBase64')"
+    }
+
+
 }
 
 data class UserToken(val id: Long, val tokenFB: String)
