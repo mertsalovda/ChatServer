@@ -9,5 +9,3 @@ data class User(var name: String, var password: String) {
     }
 
 }
-
-data class UserLogin(val name: String, val password: String)

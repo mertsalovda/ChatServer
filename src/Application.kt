@@ -15,7 +15,7 @@ import io.ktor.server.netty.Netty
 import ru.mertsalovda.ktor.chatserver.data.exeptions.AuthenticationException
 import ru.mertsalovda.ktor.chatserver.data.exeptions.RegistrationException
 import ru.mertsalovda.ktor.chatserver.data.model.User
-import ru.mertsalovda.ktor.chatserver.data.model.UserLogin
+//import ru.mertsalovda.ktor.chatserver.data.model.UserLogin
 import ru.mertsalovda.ktor.chatserver.data.repository.IRepository
 import ru.mertsalovda.ktor.chatserver.data.repository.MapUsersRepositoryImpl
 
@@ -55,12 +55,12 @@ fun main() {
             }
 
             post("/login") {
-                val ul = call.receive<UserLogin>()
-                val result = repository.insertItem(User(ul.name, ul.password))
+                val user = call.receive<User>()
+                val result = repository.insertItem(user)
                 if (result) {
                     call.respond(HttpStatusCode.Created)
                 } else {
-                    throw RegistrationException("""Пользователь с именем "${ul.name}" уже существует.""")
+                    throw RegistrationException("""Пользователь с именем "${user.name}" уже существует.""")
                 }
             }
 
