@@ -60,12 +60,12 @@ fun main() {
             }
         }
         routing {
+            get("/users") {
+                val result = repository.getAll()
+                call.respond(HttpStatusCode.OK, result)
+                call.info(result)
+            }
             authenticate {
-                get("/users") {
-                    val result = repository.getAll()
-                    call.respond(HttpStatusCode.OK, result)
-                    call.info(result)
-                }
                 post("/user/token") {
                     val userToken = call.receive<UserToken>()
                     call.info(userToken)
