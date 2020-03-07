@@ -5,8 +5,8 @@ import ru.mertsalovda.ktor.chatserver.data.model.User
 class MapUsersRepositoryImpl : UserRepository {
 
     val mapUsers = mutableMapOf(
-        1L to User(1, "admin", "admin"),
-        2L to User(2, "test", "test")
+        1L to User(1, "admin"),
+        2L to User(2, "test")
     )
 
     override fun insertItem(item: User): Boolean {
@@ -41,8 +41,8 @@ class MapUsersRepositoryImpl : UserRepository {
         return mapUsers[id]
     }
 
-    override fun updateItemToken(id: Long, token: String): Boolean {
-        mapUsers[id].let { it ?: return false }.tokenFB = token
+    override fun updateItemToken(id: Long, uid: Long): Boolean {
+        mapUsers[id].let { it ?: return false }.uid = uid
         return true
     }
 

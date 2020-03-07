@@ -28,8 +28,8 @@ import ru.mertsalovda.ktor.chatserver.data.repository.MessageRepository
 fun main() {
     val repository: UserRepository = MapUsersRepositoryImpl()
     val repoMessages: MessageRepository = MapMessagesRepository()
-
-    val server = embeddedServer(Netty, host = "127.0.0.1", port = 8080) {
+    val port = if(System.getenv("SERVER_PORT").isNullOrEmpty()) "8080" else System.getenv("SERVER_PORT")
+    val server = embeddedServer(Netty, host = "127.0.0.1", port = port.toInt()) {
         install(CallLogging) {
             level = Level.INFO
         }
@@ -42,7 +42,7 @@ fun main() {
             basic {
                 validate {
                     val user = repository.getAll().first { user -> user.name == it.name }
-                    if (it.name == user.name && it.password == user.password) {
+                    if (it.name == user.name) {
                         UserIdPrincipal(it.name)
                     } else throw AuthenticationException("Wrong login or password")
                 }
@@ -60,6 +60,9 @@ fun main() {
             }
         }
         routing {
+            get("/"){
+                call.respond(HttpStatusCode.OK, "Hello!")
+            }
             get("/users") {
                 val result = repository.getAll()
                 call.respond(HttpStatusCode.OK, result)
@@ -69,7 +72,7 @@ fun main() {
                 post("/user/token") {
                     val userToken = call.receive<UserToken>()
                     call.info(userToken)
-                    val result = repository.updateItemToken(userToken.id, userToken.tokenFB)
+                    val result = true
                     if (result) {
                         call.respond(HttpStatusCode.OK)
                     } else {
@@ -103,7 +106,7 @@ fun main() {
                 call.info(user)
                 val result = repository.insertItem(user)
                 if (result) {
-                    repository.getById(user.id)?.let { call.respond(HttpStatusCode.Created, it.chatToken) }
+                    repository.getById(user.id)?.let { call.respond(HttpStatusCode.Created, it.uid) }
                 } else {
                     throw RegistrationException("""Пользователь с именем "${user.name}" уже существует.""")
                 }

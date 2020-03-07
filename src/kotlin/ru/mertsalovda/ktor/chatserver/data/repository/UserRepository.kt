@@ -9,6 +9,6 @@ interface UserRepository {
     fun deleteItem(item: User): Boolean
     fun getAll(): List<User>
     fun getById(id: Long): User?
-    fun updateItemToken(id: Long, token: String): Boolean
+    fun updateItemToken(id: Long, uid: Long): Boolean
     fun getAllForId(id: Long): List<User>
 }
