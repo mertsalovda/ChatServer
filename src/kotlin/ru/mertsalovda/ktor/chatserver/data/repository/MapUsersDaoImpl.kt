@@ -2,9 +2,9 @@ package ru.mertsalovda.ktor.chatserver.data.repository
 
 import ru.mertsalovda.ktor.chatserver.data.model.User
 
-class MapUsersRepositoryImpl : UserRepository {
+class MapUsersDaoImpl : UserDao {
 
-    val mapUsers = mutableMapOf(
+    private val mapUsers = mutableMapOf(
         1L to User(1, "admin"),
         2L to User(2, "test")
     )
@@ -46,7 +46,7 @@ class MapUsersRepositoryImpl : UserRepository {
         return true
     }
 
-    override fun getAllForId(id: Long): List<User> {
+    override fun getAllById(id: Long): List<User> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

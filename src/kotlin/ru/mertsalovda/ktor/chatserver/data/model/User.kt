@@ -1,10 +1,11 @@
 package ru.mertsalovda.ktor.chatserver.data.model
 
+import java.util.*
 import kotlin.properties.Delegates
 
 data class User(var name: String) {
     var id by Delegates.notNull<Long>()
-    var uid: Long = 0
+    var uid: Long = UUID.randomUUID().mostSignificantBits
     var lastTime: Long = 0
     var about = ""
     var imageUrl = ""

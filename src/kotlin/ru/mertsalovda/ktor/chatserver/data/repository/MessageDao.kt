@@ -2,7 +2,7 @@ package ru.mertsalovda.ktor.chatserver.data.repository
 
 import ru.mertsalovda.ktor.chatserver.data.model.Message
 
-interface MessageRepository {
+interface MessageDao {
 
     fun getAll(): List<Message>
 

@@ -18,16 +18,15 @@ import ru.mertsalovda.ktor.chatserver.data.exeptions.AuthenticationException
 import ru.mertsalovda.ktor.chatserver.data.exeptions.ExistException
 import ru.mertsalovda.ktor.chatserver.data.exeptions.RegistrationException
 import ru.mertsalovda.ktor.chatserver.data.model.Message
+import ru.mertsalovda.ktor.chatserver.data.model.Profile
 import ru.mertsalovda.ktor.chatserver.data.model.User
 import ru.mertsalovda.ktor.chatserver.data.model.UserToken
-import ru.mertsalovda.ktor.chatserver.data.repository.MapMessagesRepository
-import ru.mertsalovda.ktor.chatserver.data.repository.MapUsersRepositoryImpl
-import ru.mertsalovda.ktor.chatserver.data.repository.UserRepository
-import ru.mertsalovda.ktor.chatserver.data.repository.MessageRepository
+import ru.mertsalovda.ktor.chatserver.data.repository.*
 
 fun main() {
-    val repository: UserRepository = MapUsersRepositoryImpl()
-    val repoMessages: MessageRepository = MapMessagesRepository()
+    val userDao: UserDao = MapUsersDaoImpl()
+    val profileDao: ProfileDao = MapProfileDaoImpl()
+    val repoMessages: MessageDao = MapMessagesDao()
     val port = if(System.getenv("SERVER_PORT").isNullOrEmpty()) "8080" else System.getenv("SERVER_PORT")
     val server = embeddedServer(Netty, host = "127.0.0.1", port = port.toInt()) {
         install(CallLogging) {
@@ -41,8 +40,8 @@ fun main() {
         install(Authentication) {
             basic {
                 validate {
-                    val user = repository.getAll().first { user -> user.name == it.name }
-                    if (it.name == user.name) {
+                    val profile = profileDao.getAll().first { profile -> profile.name == it.name }
+                    if (it.name == profile.name && it.password == profile.password) {
                         UserIdPrincipal(it.name)
                     } else throw AuthenticationException("Wrong login or password")
                 }
@@ -63,12 +62,12 @@ fun main() {
             get("/"){
                 call.respond(HttpStatusCode.OK, "Hello!")
             }
-            get("/users") {
-                val result = repository.getAll()
-                call.respond(HttpStatusCode.OK, result)
-                call.info(result)
-            }
             authenticate {
+                get("/users") {
+                    val result = userDao.getAll()
+                    call.respond(HttpStatusCode.OK, result)
+                    call.info(result)
+                }
                 post("/user/token") {
                     val userToken = call.receive<UserToken>()
                     call.info(userToken)
@@ -102,13 +101,15 @@ fun main() {
             }
 
             post("/login") {
-                val user = call.receive<User>()
-                call.info(user)
-                val result = repository.insertItem(user)
+                val newProfile = call.receive<Profile>()
+                call.info(newProfile)
+                val result = profileDao.insertItem(newProfile)
                 if (result) {
-                    repository.getById(user.id)?.let { call.respond(HttpStatusCode.Created, it.uid) }
+                    val user = User(newProfile.name)
+                    userDao.insertItem(user)
+                    call.respond(HttpStatusCode.Created)
                 } else {
-                    throw RegistrationException("""Пользователь с именем "${user.name}" уже существует.""")
+                    throw RegistrationException("""Пользователь с именем "${newProfile.name}" уже существует.""")
                 }
             }
 

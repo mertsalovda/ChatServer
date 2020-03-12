@@ -2,7 +2,7 @@ package ru.mertsalovda.ktor.chatserver.data.repository
 
 import ru.mertsalovda.ktor.chatserver.data.model.Message
 
-class MapMessagesRepository : MessageRepository {
+class MapMessagesDao : MessageDao {
 
     val mapMessages = mutableMapOf(
         1L to Message(1, 2, "Hello world!", 1234566789L)
