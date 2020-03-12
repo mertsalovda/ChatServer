@@ -46,6 +46,10 @@ class MapUsersDaoImpl : UserDao {
         return true
     }
 
+    override fun getUserByName(name: String): User? {
+        return mapUsers.toList().first{it.second.name == name}.second
+    }
+
     override fun getAllById(id: Long): List<User> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

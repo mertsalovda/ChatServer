@@ -11,4 +11,5 @@ interface UserDao {
     fun getById(id: Long): User?
     fun updateItemToken(id: Long, uid: Long): Boolean
     fun getAllById(id: Long): List<User>
+    fun getUserByName(name: String): User?
 }

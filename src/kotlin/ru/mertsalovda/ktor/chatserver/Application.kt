@@ -27,7 +27,7 @@ fun main() {
     val userDao: UserDao = MapUsersDaoImpl()
     val profileDao: ProfileDao = MapProfileDaoImpl()
     val repoMessages: MessageDao = MapMessagesDao()
-    val port = if(System.getenv("SERVER_PORT").isNullOrEmpty()) "8080" else System.getenv("SERVER_PORT")
+    val port = if (System.getenv("SERVER_PORT").isNullOrEmpty()) "8080" else System.getenv("SERVER_PORT")
     val server = embeddedServer(Netty, host = "127.0.0.1", port = port.toInt()) {
         install(CallLogging) {
             level = Level.INFO
@@ -59,7 +59,7 @@ fun main() {
             }
         }
         routing {
-            get("/"){
+            get("/") {
                 call.respond(HttpStatusCode.OK, "Hello!")
             }
             authenticate {
@@ -87,20 +87,30 @@ fun main() {
                         call.info(userToken)
                         call.info(result)
                     }
-                    post{
+                    post {
                         val message = call.receive<Message>()
                         call.info(message)
                         val result = repoMessages.insertItem(message)
-                        if (result){
+                        if (result) {
                             call.respond(HttpStatusCode.OK)
                         } else {
                             throw ExistException("Что-то пошло не так.")
                         }
                     }
                 }
+
+                post("/authorization") {
+                    val user = call.receive<User>()
+                    val result = userDao.getUserByName(user.name)
+                    if (result != null) {
+                        call.respond(HttpStatusCode.OK, result)
+                    } else {
+                        throw AuthenticationException("Ошибка авторизации.")
+                    }
+                }
             }
 
-            post("/login") {
+            post("/registration") {
                 val newProfile = call.receive<Profile>()
                 call.info(newProfile)
                 val result = profileDao.insertItem(newProfile)
@@ -112,6 +122,7 @@ fun main() {
                     throw RegistrationException("""Пользователь с именем "${newProfile.name}" уже существует.""")
                 }
             }
+
 
         }
 
